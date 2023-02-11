@@ -1,10 +1,10 @@
-package helper
+package main
 
 import (
 	"strings"
 )
 
-func ValidateUserInput(firstName string, lastName string, emailAddress string, numTickets uint, remainingTickets uint) (bool, bool, bool) {
+func validateUserInput(firstName string, lastName string, emailAddress string, numTickets uint) (bool, bool, bool) {
 	isValidName := len(firstName) >= 2 && len(lastName) >= 2
 	isValidEmail := strings.Contains(emailAddress, "@")
 	isValidTicketNumber := numTickets > 0 && numTickets <= remainingTickets
