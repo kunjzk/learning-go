@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -11,6 +12,7 @@ const conferenceTickets uint = 50
 
 var remainingTickets uint = 50
 var bookings = make([]UserData, 0)
+var wg = sync.WaitGroup{}
 
 type UserData struct {
 	firstName       string
@@ -21,33 +23,32 @@ type UserData struct {
 
 func main() {
 	greetUser()
-	for {
-		firstName, lastName, emailAddress, numTickets := getUserInput()
-		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, emailAddress, numTickets)
+	firstName, lastName, emailAddress, numTickets := getUserInput()
+	isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, emailAddress, numTickets)
 
-		if isValidName && isValidEmail && isValidTicketNumber {
-			bookTickets(numTickets, firstName, lastName, emailAddress)
-			go sendTicket(numTickets, firstName, lastName, emailAddress)
-			firstNames := getFirstNames()
-			fmt.Printf("First names of bookings: %v\n", firstNames)
-			if remainingTickets == 0 {
-				fmt.Println("No tickets remaining, closing sale.")
-				break
-			}
-		} else {
-			if !isValidName {
-				fmt.Println("First name or last name entered is too short")
-			}
-			if !isValidEmail {
-				fmt.Println("Entered email does not contain @ sign")
-			}
-			if !isValidTicketNumber {
-				fmt.Println("Number of tickets is invalid")
-			}
-
-			fmt.Printf("Your input data is invalid, try again \n\n")
+	if isValidName && isValidEmail && isValidTicketNumber {
+		bookTickets(numTickets, firstName, lastName, emailAddress)
+		wg.Add(1)
+		go sendTicket(numTickets, firstName, lastName, emailAddress)
+		firstNames := getFirstNames()
+		fmt.Printf("First names of bookings: %v\n", firstNames)
+		if remainingTickets == 0 {
+			fmt.Println("No tickets remaining, closing sale.")
 		}
+	} else {
+		if !isValidName {
+			fmt.Println("First name or last name entered is too short")
+		}
+		if !isValidEmail {
+			fmt.Println("Entered email does not contain @ sign")
+		}
+		if !isValidTicketNumber {
+			fmt.Println("Number of tickets is invalid")
+		}
+
+		fmt.Printf("Your input data is invalid, try again \n\n")
 	}
+	wg.Wait()
 }
 
 func greetUser() {
@@ -107,4 +108,5 @@ func sendTicket(numTickets uint, firstName string, lastName string, emailAddress
 	fmt.Println("########")
 	fmt.Printf("Sending Ticket: %v\nTo email address %v\n", ticket, emailAddress)
 	fmt.Println("########")
+	wg.Done()
 }
