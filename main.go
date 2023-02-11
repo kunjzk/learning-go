@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 var conferenceName string = "Go Conference"
 
@@ -24,6 +27,7 @@ func main() {
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 			bookTickets(numTickets, firstName, lastName, emailAddress)
+			go sendTicket(numTickets, firstName, lastName, emailAddress)
 			firstNames := getFirstNames()
 			fmt.Printf("First names of bookings: %v\n", firstNames)
 			if remainingTickets == 0 {
@@ -95,4 +99,12 @@ func bookTickets(numTickets uint, firstName string, lastName string, emailAddres
 
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, numTickets, emailAddress)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+}
+
+func sendTicket(numTickets uint, firstName string, lastName string, emailAddress string) {
+	time.Sleep(10 * time.Second)
+	ticket := fmt.Sprintf("%v tickets for %v %v", numTickets, firstName, lastName)
+	fmt.Println("########")
+	fmt.Printf("Sending Ticket: %v\nTo email address %v\n", ticket, emailAddress)
+	fmt.Println("########")
 }
