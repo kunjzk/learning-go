@@ -1,6 +1,6 @@
 # Learning Go
 
-Booking-app from this video: https://www.youtube.com/watch?v=yyUHQIec83I&t=9331s
+CLI tool that implements a booking app. From this video: https://www.youtube.com/watch?v=yyUHQIec83I&t=9331s
 
 ## Branches
 - main: folows the techworld video
